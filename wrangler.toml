@@ -1,5 +1,0 @@
-name = "burdah-manager"
-compatibility_date = "2026-10-01"
-
-[site]
-bucket = "./"
