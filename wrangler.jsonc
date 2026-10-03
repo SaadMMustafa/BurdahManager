@@ -1,5 +1,9 @@
 {
-  // ...
+  "name": "burdah-manager",
+  "compatibility_date": "2026-10-03",
+  "assets": {
+    "directory": "."
+  },
   "observability": {
     "logs": {
       "enabled": true,
@@ -12,6 +16,5 @@
       "head_sampling_rate": 1,
       "persist": true
     }
-  },
-  // ...
+  }
 }
