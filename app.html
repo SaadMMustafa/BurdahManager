@@ -1,0 +1,374 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>مدير موسوعة البُردة</title>
+  <link rel="stylesheet" href="assets/css/manager.css">
+  <link id="publicSiteCss" rel="stylesheet" href="assets/css/site.css" media="not all">
+</head>
+<body>
+  <div class="app">
+    <aside class="side">
+      <div class="brand">مدير البُردة</div>
+      <div class="sub">نظام إدارة موسوعة البُردة — HTML / CSS / JS</div>
+      <div class="nav">
+        <button data-view="dashboard">لوحة التحكم</button>
+        <button data-view="poem">بيانات القصيدة</button>
+        <button data-view="chapters">الفصول</button>
+        <button data-view="verses">الأبيات</button>
+        <button data-view="explanations">الشروح</button>
+        <button data-view="sources">المصادر</button>
+        <button data-view="dictionary">المعجم</button>
+        <button data-view="authors">المؤلفون</button>
+        <button data-view="settings">إعدادات الموقع</button>
+        <button data-view="preview">المعاينة</button>
+        <button data-view="export">التصدير / النسخ الاحتياطي</button>
+      </div>
+    </aside>
+    <main class="main">
+      <div class="top">
+        <div>
+          <h1 id="title">لوحة التحكم</h1>
+          <div class="muted" id="saveState">محلي — لا يحتاج إلى قاعدة بيانات</div>
+        </div>
+        <div class="actions">
+          <button class="btn" id="undoBtn" title="تراجع (Ctrl+Z)" disabled>↩ تراجع</button>
+          <button class="btn" id="redoBtn" title="إعادة (Ctrl+Y)" disabled>↪ إعادة</button>
+          <button class="btn" id="importBtn">استيراد JSON</button>
+          <button class="btn primary" id="saveBtn">حفظ</button>
+          <button class="btn" id="resetBtn">استعادة آخر نسخة محفوظة</button>
+          <button class="btn" id="onlineLoginBtn" onclick="openOnlineLogin()">تسجيل الدخول Online</button>
+          <button class="btn" id="onlineLoadBtn" onclick="onlineLoad()">تحميل من Supabase</button>
+          <button class="btn" id="onlineSaveBtn" onclick="onlineSave()">حفظ في Supabase</button>
+          <span id="onlineStatus" class="muted">Online غير متصل</span>
+          <input id="fileInput" type="file" accept="application/json" hidden>
+        </div>
+      </div>
+
+      <!-- لوحة التحكم -->
+      <section class="view" id="view-dashboard">
+        <div class="notice">هذا الإصدار يحوّل الـPrototype الحالي إلى CMS محلي. كل تعديل يُحفظ في LocalStorage، ويمكن تصدير الموقع النهائي كملف HTML مستقل يعمل بدون النظام الإداري.</div>
+        <div class="cards" id="stats"></div>
+        <div class="grid" style="margin-top:14px">
+          <div class="panel">
+            <h2>معلومات المشروع</h2>
+            <div id="versionInfo" class="muted"></div>
+            <div id="storageInfo" class="muted" style="margin-top:5px"></div>
+          </div>
+          <div class="panel">
+            <h2>سجل الإصدارات</h2>
+            <div class="version-list" id="versionList"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- بيانات القصيدة -->
+      <section class="view" id="view-poem">
+        <div class="panel">
+          <h2>بيانات القصيدة</h2>
+          <div class="two">
+            <div class="field">
+              <label>العنوان</label>
+              <input id="poem-title">
+            </div>
+            <div class="field">
+              <label>العنوان الكامل</label>
+              <input id="poem-fullTitle">
+            </div>
+            <div class="field">
+              <label>المؤلف</label>
+              <input id="poem-author">
+            </div>
+            <div class="field">
+              <label>عدد الأبيات</label>
+              <input id="poem-verseCount" type="number">
+            </div>
+          </div>
+          <div class="field">
+            <label>عنوان قسم "البوصيري والبُردة"</label>
+            <input id="poem-aboutTitle">
+          </div>
+          <div class="field">
+            <label>المقدمة — Markdown</label>
+            <div id="md-poem-intro"></div>
+          </div>
+          <div class="field">
+            <label>عن القصيدة — Markdown</label>
+            <div id="md-poem-about"></div>
+          </div>
+          <div class="field">
+            <label>ملاحظة البنية — Markdown</label>
+            <div id="md-poem-structureNote"></div>
+          </div>
+          <button class="btn primary" onclick="savePoem()">حفظ بيانات القصيدة</button>
+        </div>
+        <div class="panel" style="margin-top:14px">
+          <h2>أقسام "البوصيري والبُردة"</h2>
+          <div id="aboutSectionsManager"></div>
+          <button class="btn" onclick="addAboutSection()">+ إضافة قسم</button>
+        </div>
+      </section>
+
+      <!-- الفصول -->
+      <section class="view" id="view-chapters">
+        <div class="panel">
+          <h2>الفصول</h2>
+          <button class="btn primary" onclick="newChapter()">+ إضافة فصل</button>
+          <div class="table-wrap" style="margin-top:10px">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>الاسم المختصر</th>
+                  <th>العنوان</th>
+                  <th>الوصف</th>
+                  <th>إجراءات</th>
+                </tr>
+              </thead>
+              <tbody id="chaptersTable"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- الأبيات -->
+      <section class="view" id="view-verses">
+        <div class="panel">
+          <h2>الأبيات</h2>
+          <div class="field">
+            <input id="verseFilter" placeholder="بحث في الأبيات...">
+          </div>
+          <button class="btn primary" onclick="newVerse()">+ إضافة بيت</button>
+          <div class="table-wrap" style="margin-top:10px">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>الرقم</th>
+                  <th>الفصل</th>
+                  <th>الشطر الأول</th>
+                  <th>الشطر الثاني</th>
+                  <th>إجراءات</th>
+                </tr>
+              </thead>
+              <tbody id="versesTable"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- الشروح -->
+      <section class="view" id="view-explanations">
+        <div class="panel">
+          <h2>الشروح</h2>
+          <div class="field">
+            <input id="explanationFilter" placeholder="بحث في الشروح...">
+          </div>
+          <div class="table-wrap">
+            <table class="table explanations-table">
+              <thead>
+                <tr>
+                  <th>البيت</th>
+                  <th>الشروح</th>
+                  <th>إجراءات</th>
+                </tr>
+              </thead>
+              <tbody id="explanationsTable"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- المصادر -->
+      <section class="view" id="view-sources">
+        <div class="panel">
+          <h2>المصادر</h2>
+          <button class="btn primary" onclick="newSource()">+ إضافة مصدر</button>
+          <div class="table-wrap" style="margin-top:10px">
+            <table class="table source-table">
+              <thead>
+                <tr>
+                  <th>العنوان</th>
+                  <th>الغلاف</th>
+                  <th>المؤلف</th>
+                  <th>النوع/القسم</th>
+                  <th>إجراءات</th>
+                </tr>
+              </thead>
+              <tbody id="sourcesTable"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- المعجم -->
+      <section class="view" id="view-dictionary">
+        <div class="panel">
+          <h2>المعجم</h2>
+          <button class="btn primary" onclick="newTerm()">+ إضافة لفظ</button>
+          <div class="table-wrap" style="margin-top:10px">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>اللفظ</th>
+                  <th>المعنى</th>
+                  <th>الأبيات</th>
+                  <th>إجراءات</th>
+                </tr>
+              </thead>
+              <tbody id="dictionaryTable"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- المؤلفون -->
+      <section class="view" id="view-authors">
+        <div class="panel">
+          <h2>المؤلفون</h2>
+          <button class="btn primary" onclick="newAuthor()">+ إضافة مؤلف</button>
+          <div class="table-wrap" style="margin-top:10px">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>الاسم</th>
+                  <th>التعريف</th>
+                  <th>عدد المصادر</th>
+                  <th>إجراءات</th>
+                </tr>
+              </thead>
+              <tbody id="authorsTable"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- الإعدادات -->
+      <section class="view" id="view-settings">
+        <div class="panel">
+          <h2>إعدادات الموقع</h2>
+          <div class="field">
+            <label>اسم الموقع</label>
+            <input id="siteName">
+          </div>
+          <div class="field">
+            <label>وصف الموقع — Markdown</label>
+            <div id="md-siteDescription"></div>
+          </div>
+          <div class="field">
+            <label>رابط الموقع</label>
+            <input id="siteUrl" placeholder="https://example.com">
+          </div>
+          <button class="btn primary" onclick="saveSettings()">حفظ الإعدادات</button>
+        </div>
+        <div class="panel" style="margin-top:14px">
+          <h2>إعدادات SEO</h2>
+          <div class="seo-section">
+            <h3>الإعدادات الأساسية</h3>
+            <div class="field">
+              <label>عنوان SEO</label>
+              <input id="seoTitle">
+            </div>
+            <div class="field">
+              <label>وصف SEO</label>
+              <input id="seoDescription">
+            </div>
+            <div class="field">
+              <label>الكلمات المفتاحية</label>
+              <input id="seoKeywords">
+            </div>
+            <div class="field">
+              <label>صورة OG</label>
+              <input id="seoOgImage">
+            </div>
+            <div class="field">
+              <label>لون الثيم</label>
+              <input id="seoThemeColor" type="color">
+            </div>
+          </div>
+          <div class="seo-section">
+            <h3>إعدادات متقدمة</h3>
+            <div class="field">
+              <label>رمز تحقق Google</label>
+              <input id="seoGoogleVerification">
+            </div>
+            <div class="field">
+              <label>رمز تحقق Bing</label>
+              <input id="seoBingVerification">
+            </div>
+            <div class="field">
+              <label>المؤلف الافتراضي</label>
+              <input id="seoDefaultAuthor">
+            </div>
+            <div class="field">
+              <label>
+                <input type="checkbox" id="seoIndex"> فهرسة الموقع
+              </label>
+            </div>
+            <div class="field">
+              <label>
+                <input type="checkbox" id="seoFollow"> اتباع الروابط
+              </label>
+            </div>
+            <div class="field">
+              <label>
+                <input type="checkbox" id="seoSitemap"> تضمين في Sitemap
+              </label>
+            </div>
+            <div class="field">
+              <label>
+                <input type="checkbox" id="seoCanonical"> استخدام Canonical URL
+              </label>
+            </div>
+          </div>
+          <button class="btn primary" onclick="saveSettings()">حفظ إعدادات SEO</button>
+        </div>
+      </section>
+
+      <!-- المعاينة -->
+      <section class="view" id="view-preview">
+        <div class="panel">
+          <h2>معاينة الموقع</h2>
+          <div class="preview">
+            <iframe id="previewFrame"></iframe>
+          </div>
+        </div>
+      </section>
+
+      <!-- التصدير -->
+      <section class="view" id="view-export">
+        <div class="panel">
+          <h2>التصدير / النسخ الاحتياطي</h2>
+          <div class="grid">
+            <div>
+              <h3>تصدير الموقع Static</h3>
+              <p class="muted">تصدير الموقع كملفات HTML/CSS/JS مستقلة يمكن رفعها على أي استضافة.</p>
+              <button class="btn primary" onclick="exportStatic()">تصدير ZIP</button>
+            </div>
+            <div>
+              <h3>نسخة احتياطية JSON</h3>
+              <p class="muted">حفظ نسخة من البيانات كملف JSON.</p>
+              <button class="btn" onclick="exportJSON()">تصدير JSON</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- النافذة المنبثقة -->
+  <div class="modal" id="modal">
+    <div class="modal-box">
+      <div class="modal-head">
+        <h2 id="modalTitle"></h2>
+        <button class="btn" onclick="closeModal()">إغلاق</button>
+      </div>
+      <div id="modalBody"></div>
+    </div>
+  </div>
+
+  <script src="supabase/config.js"></script>
+  <script src="supabase/online-adapter.js"></script>
+  <script src="assets/js/manager.js"></script>
+</body>
+</html>

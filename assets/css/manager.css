@@ -1,0 +1,645 @@
+﻿/* ==================== التنسيقات الأساسية ==================== */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #f4f6f1;
+  color: #173f34;
+  font-family: Tahoma, Arial, sans-serif;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+/* ==================== هيكل التطبيق ==================== */
+.app {
+  display: grid;
+  grid-template-columns: 270px 1fr;
+  min-height: 100vh;
+}
+
+.side {
+  background: #173f34;
+  color: #fff;
+  padding: 20px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+}
+
+.brand {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+
+.sub {
+  font-size: 11px;
+  opacity: 0.7;
+  margin-bottom: 24px;
+}
+
+.nav button {
+  display: block;
+  width: 100%;
+  text-align: right;
+  border: 0;
+  background: transparent;
+  color: #dce9e1;
+  padding: 11px 12px;
+  border-radius: 9px;
+  margin: 3px 0;
+  cursor: pointer;
+}
+
+.nav button.active,
+.nav button:hover {
+  background: #2f765f;
+  color: #fff;
+}
+
+.main {
+  padding: 24px;
+  min-width: 0;
+}
+
+/* ==================== الشريط العلوي ==================== */
+.top {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.top h1 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+/* ==================== الأزرار ==================== */
+.btn {
+  border: 1px solid #d7ded7;
+  background: #fff;
+  color: #173f34;
+  padding: 9px 14px;
+  border-radius: 9px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn:hover {
+  background: #f0f4ed;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn.primary {
+  background: #23624f;
+  color: #fff;
+  border-color: #23624f;
+}
+
+.btn.primary:hover {
+  background: #1a4a3c;
+}
+
+.btn.danger {
+  color: #9a3030;
+}
+
+.btn.danger:hover {
+  background: #fdf0f0;
+}
+
+/* ==================== نظام الإشعارات (Toast) ==================== */
+.toast-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.toast {
+  padding: 12px 20px;
+  border-radius: 10px;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  opacity: 0;
+  transform: translateX(100%);
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.toast-success {
+  background: #23624f;
+}
+
+.toast-error {
+  background: #9a3030;
+}
+
+.toast-info {
+  background: #173f34;
+}
+
+/* ==================== العرض ==================== */
+.view {
+  display: none;
+}
+
+.view.active {
+  display: block;
+}
+
+/* ==================== البطاقات ==================== */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.card,
+.panel {
+  background: #fff;
+  border: 1px solid #dfe3da;
+  border-radius: 14px;
+  padding: 16px;
+}
+
+.card strong {
+  font-size: 25px;
+  display: block;
+}
+
+.card span {
+  font-size: 11px;
+  color: #6f7c76;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.panel h2 {
+  margin: 0 0 13px;
+  font-size: 17px;
+}
+
+/* ==================== الحقول ==================== */
+.field {
+  margin-bottom: 12px;
+}
+
+.field label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+
+.field input,
+.field textarea,
+.field select {
+  width: 100%;
+  border: 1px solid #d8ded7;
+  border-radius: 8px;
+  padding: 9px;
+  background: #fff;
+}
+
+.field textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+/* ==================== محرر Markdown ==================== */
+.md-editor {
+  border: 1px solid #d8ded7;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.md-toolbar {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+  padding: 7px;
+  border-bottom: 1px solid #edf0ea;
+  background: #f7f9f5;
+}
+
+.md-toolbar button {
+  border: 1px solid #d8ded7;
+  background: #fff;
+  border-radius: 7px;
+  padding: 5px 8px;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.md-toolbar button:hover {
+  background: #f0f4ed;
+}
+
+.md-editor textarea {
+  border: 0;
+  border-radius: 0;
+  min-height: 150px;
+  width: 100%;
+  outline: none;
+}
+
+.md-preview {
+  padding: 12px;
+  border-top: 1px solid #edf0ea;
+  background: #fcfcfa;
+  min-height: 50px;
+  font-family: Tahoma, Arial, sans-serif;
+  line-height: 1.9;
+}
+
+.md-preview:empty:before {
+  content: "المعاينة ستظهر هنا…";
+  color: #9aa39e;
+}
+
+/* ==================== الصور ==================== */
+.image-preview {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.image-preview img {
+  width: 96px;
+  height: 70px;
+  object-fit: cover;
+  border: 1px solid #dfe3da;
+  border-radius: 8px;
+}
+
+/* ==================== جداول ==================== */
+.table-wrap {
+  overflow: auto;
+  border: 1px solid #dfe3da;
+  border-radius: 12px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  table-layout: fixed;
+}
+
+.table th,
+.table td {
+  padding: 9px 10px;
+  border-bottom: 1px solid #edf0ea;
+  text-align: right;
+  font-size: 11px;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  vertical-align: middle;
+}
+
+.table th {
+  background: #f6f8f4;
+}
+
+.table th,
+.table td {
+  word-break: break-word;
+}
+
+.row-actions {
+  display: flex;
+  gap: 5px;
+}
+
+/* ==================== الشروح ==================== */
+.explanations-wrap {
+  overflow-x: hidden;
+}
+
+.explanations-table {
+  table-layout: fixed;
+}
+
+.explanations-table th:nth-child(1),
+.explanations-table td:nth-child(1) {
+  width: 35%;
+}
+
+.explanations-table th:nth-child(2),
+.explanations-table td:nth-child(2) {
+  width: 45%;
+}
+
+.explanations-table th:nth-child(3),
+.explanations-table td:nth-child(3) {
+  width: 20%;
+}
+
+.explain-cell {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex-wrap: wrap;
+}
+
+.explain-picker {
+  min-width: 0;
+  flex: 1 1 220px;
+  border: 1px solid #d8ded7;
+  border-radius: 8px;
+  padding: 7px;
+  background: #fff;
+}
+
+.explain-actions {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+
+.verse-linked {
+  font-family: "Noto Naskh Arabic", Tahoma, sans-serif;
+  font-size: 15px;
+  line-height: 1.8;
+}
+
+.verse-linked small {
+  display: block;
+  font-family: Tahoma, Arial, sans-serif;
+  font-size: 10px;
+  color: #6f7c76;
+}
+
+.chapter-row td {
+  background: #f0f4ed;
+  color: #23624f;
+  font-weight: 700;
+  border-bottom-color: #dfe7df;
+}
+
+.no-explanation {
+  color: #8a948f;
+}
+
+/* ==================== المصادر ==================== */
+.source-table {
+  min-width: 0;
+}
+
+.source-table th:nth-child(1),
+.source-table td:nth-child(1) {
+  width: 30%;
+}
+
+.source-table th:nth-child(2),
+.source-table td:nth-child(2) {
+  width: 11%;
+}
+
+.source-table th:nth-child(3),
+.source-table td:nth-child(3) {
+  width: 24%;
+}
+
+.source-table th:nth-child(4),
+.source-table td:nth-child(4) {
+  width: 20%;
+}
+
+.source-table th:nth-child(5),
+.source-table td:nth-child(5) {
+  width: 15%;
+}
+
+.source-table td:last-child {
+  white-space: normal;
+}
+
+.source-table td:last-child .btn {
+  display: inline-flex;
+  margin: 2px 0;
+  padding: 6px 8px;
+  font-size: 10px;
+}
+
+.source-cover-cell img {
+  display: block;
+  width: 56px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.author-mini {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 100%;
+  border: 1px solid #d7e5d8;
+  background: #eef4ed;
+  color: #23624f;
+  border-radius: 999px;
+  padding: 5px 9px;
+  cursor: pointer;
+  white-space: normal;
+  text-align: center;
+  line-height: 1.5;
+}
+
+/* ==================== الإشعارات ==================== */
+.notice {
+  padding: 11px 13px;
+  border-radius: 9px;
+  background: #e8f0e7;
+  margin-bottom: 14px;
+  font-size: 11px;
+}
+
+.muted {
+  color: #6f7c76;
+}
+
+.hint {
+  font-size: 10px;
+  color: #7a8580;
+  line-height: 1.7;
+}
+
+/* ==================== النافذة المنبثقة ==================== */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 30, 24, 0.5);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 20;
+}
+
+.modal.open {
+  display: flex;
+}
+
+.modal-box {
+  width: min(850px, 100%);
+  max-height: 90vh;
+  overflow: auto;
+  background: #fff;
+  border-radius: 16px;
+  padding: 20px;
+}
+
+.modal-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.modal-head h2 {
+  margin: 0;
+}
+
+/* ==================== المعاينة ==================== */
+.preview {
+  height: calc(100vh - 110px);
+  border: 1px solid #dfe3da;
+  border-radius: 14px;
+  background: #fff;
+  overflow: hidden;
+}
+
+.preview iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+/* ==================== سجل الإصدارات ==================== */
+.version-list {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.version-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px;
+  border-bottom: 1px solid #edf0ea;
+  font-size: 11px;
+}
+
+.version-item button {
+  padding: 4px 8px;
+  font-size: 10px;
+}
+
+/* ==================== التصميم المتجاوب ==================== */
+@media (max-width: 900px) {
+  .app {
+    grid-template-columns: 1fr;
+  }
+
+  .side {
+    position: static;
+    height: auto;
+  }
+
+  .nav {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4px;
+  }
+
+  .cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .grid,
+  .two {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .main {
+    padding: 12px;
+  }
+
+  .nav {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .top {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .actions {
+    width: 100%;
+  }
+}
+
+/* ==================== تحسينات إمكانية الوصول ==================== */
+.btn:focus,
+input:focus,
+textarea:focus,
+select:focus {
+  outline: 2px solid #23624f;
+  outline-offset: 2px;
+}
+
+/* ==================== تحسينات الأداء ==================== */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Lazy loading */
+img[loading="lazy"] {
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+img[loading="lazy"].loaded,
+img[loading="lazy"][src] {
+  opacity: 1;
+}
